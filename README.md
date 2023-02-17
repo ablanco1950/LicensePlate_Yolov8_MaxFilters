@@ -37,12 +37,14 @@ LicensePlateYolov8Train.py
 which only has 4 lines, but the line numbered 11 should indicate the full path where the license_data.yaml file is located.
 
 Running from a simple laptop, the 100 epochs of the program will take a long time, but you can always pull the lid off the laptop and
-continue the next day.
+continue the next day. As obtaining best.pt is problematic, the one used in the project tests is attached, adjusting the route of instruction 15 in GetNumberSpanishLicensePlate_Yolov8_MaxFilters
 
 As a result, inside the download folder, the directory runs\detect\trainN\weights( where in trainN, N indicates
   the last train directory created) in which the best.pt file is located, which is the base of the model and
   which is referenced in line 15 of the GetNumberSpanishLicensePlate_Yolov8_MaxFilters.py program (modify the route so that it points to the last
 train and best.pt created
+
+As obtaining best.pt is problematic, the one used in the project tests is attached, adjusting the route of instruction 15 in GetNumberSpanishLicensePlate_Yolov8_MaxFilters
 
 Run the program.
 
