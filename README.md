@@ -10,6 +10,8 @@ In this case, the option to install on the computer itself was chosen.
 
 pip install ultralytics
 
+also must be installed the normal modules in vomputer vision: pytesseract, numpy, cv2, os, re, imutils,  parabolic
+
 Functioning:
 
 
