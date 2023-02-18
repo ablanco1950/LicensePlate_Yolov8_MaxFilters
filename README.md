@@ -68,6 +68,6 @@ https://learnopencv.com/ultralytics-yolov8/#How-to-Use-YOLOv8?
 
 https://public.roboflow.com/object-detection/license-plates-us-eu/3
 
-https://medium.chom/@chanon.krittapholchai/build-object-detection-gui-with-yolov8-and-pysimplegui-76d5f5464d6c
+https://medium.com/@chanon.krittapholchai/build-object-detection-gui-with-yolov8-and-pysimplegui-76d5f5464d6c
 
 https://medium.com/@alimustoofaa/how-to-load-model-yolov8-onnx-cv2-dnn-3e176cde16e6
