@@ -56,11 +56,11 @@ The car license plates and successes or failures through the different filters a
 
 The LicenseResults.txt file lists the car license plates with their corresponding recognized ones.
 
-In a test with 21 images, 16 hits are achieved, practically those achieved with car licenses detected with yolo
+In a test with 21 images, 17 hits are achieved, the same that achieved with car licenses detected with yolo
 in and manual labeling in the LicensePlate_Labeled_MaxFilters project https://github.com/ablanco1950/LicensePlate_Labeled_MaxFilters and
 better than wit wpod_net https://github.com/ablanco1950/LicensePlate_Wpod-net_MaxFilters .
 
-Also is attached GetNumberInternationalLicensePlate_Yolov8_MaxFiltersA.py, but the hit rate is descending to 53 hits in 117 images ( 70 from 177 in https://github.com/ablanco1950/LicensePlate_Labeled_MaxFilters, because of not filteingr erronous detection in base of format of license)
+Also is attached GetNumberInternationalLicensePlate_Yolov8_MaxFiltersA.py, that tries to detect licenses plates in any format, but the hit rate is descending to 53 hits in 117 images ( 70 from 177 in https://github.com/ablanco1950/LicensePlate_Labeled_MaxFilters), because of not filtering erronous detection in base of format of license)
 
 References:
 
