@@ -12,13 +12,14 @@ dir=""
 
 
 dirname= "test6Training\\images"
+
 dirnameYolo="runs\\detect\\train9\\weights\\best.pt"
 
 # https://docs.ultralytics.com/python/
 from ultralytics import YOLO
 model = YOLO(dirnameYolo)
 class_list = model.model.names
-print(class_list)
+#print(class_list)
 
 
 
@@ -417,6 +418,7 @@ def loadimagesRoboflow (dirname):
                  if Detect_Spanish_LicensePlate(License)== -1: continue
                  
                  image = cv2.imread(filepath)
+                 image=cv2.resize(image, (640,640))
                  
                  #Color Balance
                 #https://blog.katastros.com/a?ID=01800-4bf623a1-3917-4d54-9b6a-775331ebaf05
