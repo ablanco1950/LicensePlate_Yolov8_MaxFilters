@@ -71,3 +71,12 @@ https://public.roboflow.com/object-detection/license-plates-us-eu/3
 https://medium.com/@chanon.krittapholchai/build-object-detection-gui-with-yolov8-and-pysimplegui-76d5f5464d6c
 
 https://medium.com/@alimustoofaa/how-to-load-model-yolov8-onnx-cv2-dnn-3e176cde16e6
+
+https://gist.github.com/endolith/255291#file-parabolic-py
+
+https://learnopencv.com/otsu-thresholding-with-opencv/ 
+
+https://towardsdatascience.com/image-enhancement-techniques-using-opencv-and-python-9191d5c30d45
+   
+
+
