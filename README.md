@@ -27,7 +27,7 @@ To ensure the version, the used roboflo file roboflow.zip is attached
 
 Unzip the file with the test images test6Training.zip, taking into account when unzipping you can create a folder
 
-test6Training inside the test6Training folder, there should be only one test6Training folder, otherwise you will not find the
+test6Training inside the test6Training folder,there should be only one test6Training folder, otherwise you will not find the
 test images
 
 Model Train:
