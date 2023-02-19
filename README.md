@@ -31,6 +31,8 @@ test images
 
 Model Train:
 
+the train and valid folders of the roboflow folder, resulting from the unziping of robflow.zip, must be placed in the same directory where the execution program LicensePlateYolov8Train.py is located, according to the requirements indicated in license_data.yaml
+
 run the program
 
 LicensePlateYolov8Train.py
@@ -42,10 +44,9 @@ continue the next day. As obtaining best.pt is problematic, the one used in the 
 
 As a result, inside the download folder, the directory runs\detect\trainN\weights( where in trainN, N indicates
   the last train directory created) in which the best.pt file is located, which is the base of the model and
-  which is referenced in line 15 of the GetNumberSpanishLicensePlate_Yolov8_MaxFilters.py program (modify the route so that it points to the last
-train and best.pt created
+  which is referenced in line 15 of the GetNumberSpanishLicensePlate_Yolov8_MaxFilters.py program (modify the route, the name of trainN, so that it points to the last train and best.pt created
 
-As obtaining best.pt is problematic, the one used in the project tests is attached, adjusting the route of instruction 15 in GetNumberSpanishLicensePlate_Yolov8_MaxFilters
+As obtaining best.pt is problematic, the one used in the project tests is attached,it must be  adjusted the route of instruction 15 in GetNumberSpanishLicensePlate_Yolov8_MaxFilters.py
 
 Run the program.
 
