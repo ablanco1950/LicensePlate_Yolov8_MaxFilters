@@ -74,6 +74,8 @@ https://medium.com/@chanon.krittapholchai/build-object-detection-gui-with-yolov8
 
 https://medium.com/@alimustoofaa/how-to-load-model-yolov8-onnx-cv2-dnn-3e176cde16e6
 
+Filters
+
 https://gist.github.com/endolith/334196bac1cac45a4893#
 
 https://stackoverflow.com/questions/46084476/radon-transformation-in-python
