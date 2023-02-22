@@ -10,7 +10,7 @@ In this case, the option to install on the computer itself was chosen.
 
 pip install ultralytics
 
-also must be installed the normal modules in vomputer vision: pytesseract, numpy, cv2, os, re, imutils,  parabolic
+also must be installed the normal modules in computer vision: pytesseract, numpy, cv2, os, re, imutils,  parabolic
 
 Functioning:
 
@@ -92,5 +92,7 @@ https://programmerclick.com/article/89421544914/
 
 https://anishgupta1005.medium.com/building-an-optical-character-recognizer-in-python-bbd09edfe438
 
-https://datasmarts.net/es/como-usar-el-detector-de-puntos-clave-mser-en-opencv/https://felipemeganha.medium.com/detecting-handwriting-regions-with-opencv-and-python-ff0b1050aa4e
+https://datasmarts.net/es/como-usar-el-detector-de-puntos-clave-mser-en-opencv/
+
+https://felipemeganha.medium.com/detecting-handwriting-regions-with-opencv-and-python-ff0b1050aa4e
      
