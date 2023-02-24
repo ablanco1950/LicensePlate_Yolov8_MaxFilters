@@ -60,7 +60,7 @@ In a test with 21 images, 18 hits are achieved, better than the 17 achieved with
  and manual labeling in the LicensePlate_Labeled_MaxFilters project https://github.com/ablanco1950/LicensePlate_Labeled_MaxFilters and
 better than with wpod_net https://github.com/ablanco1950/LicensePlate_Wpod-net_MaxFilters .
 
-Also is attached GetNumberInternationalLicensePlate_Yolov8_MaxFiltersA.py, that tries to detect licenses plates in any format, but the hit rate is descending to 53 hits in 117 images ( 70 from 117 in https://github.com/ablanco1950/LicensePlate_Labeled_MaxFilters), because of not filtering erronous detection in base of format of license)
+Also is attached GetNumberInternationalLicensePlate_Yolov8_MaxFiltersA.py, that tries to detect licenses plates in any format, and the hit rate is the same 70 hits in 117 than  in https://github.com/ablanco1950/LicensePlate_Labeled_MaxFilters. In this case, the success rate drops because it is not possible to eliminate pytesseract outputs that do not comply with a certain format, so the correct outputs are not enough compared to the erroneous ones to establish the correct one.
 
 References:
 
