@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-
+Created on Mon Apr 25 20:1 7:29 2022
 
 @author: Alfonso Blanco
 """
@@ -12,15 +12,13 @@ dir=""
 
 
 dirname= "test6Training\\images"
-
+#dirname= "archiveLabeled"
 dirnameYolo="runs\\detect\\train9\\weights\\best.pt"
-
 # https://docs.ultralytics.com/python/
 from ultralytics import YOLO
 model = YOLO(dirnameYolo)
 class_list = model.model.names
 #print(class_list)
-
 
 
 ######################################################################
@@ -213,6 +211,7 @@ def ApplyCLAHE(gray):
     clahe=cv2.createCLAHE(clipLimit=200,tileGridSize=(3,3))
     gray_img_clahe=clahe.apply(gray_img_eqhist)
     return gray_img_clahe
+
 #########################################################################
 def FindLicenseNumber (gray, x_offset, y_offset,  License, x_resize, y_resize, \
                        Resize_xfactor, Resize_yfactor, BilateralOption):
@@ -220,12 +219,11 @@ def FindLicenseNumber (gray, x_offset, y_offset,  License, x_resize, y_resize, \
 
     
     gray = cv2.cvtColor(gray, cv2.COLOR_BGR2GRAY)
-  
-       
+   
+    TotHits=0  
+    
     X_resize=x_resize
     Y_resize=y_resize
-    
-    TotHits=0
      
     
     gray=cv2.resize(gray,None,fx=Resize_xfactor,fy=Resize_yfactor,interpolation=cv2.INTER_CUBIC)
@@ -239,69 +237,224 @@ def FindLicenseNumber (gray, x_offset, y_offset,  License, x_resize, y_resize, \
     if (rotation > 0 and rotation < 30)  or (rotation < 0 and rotation > -30):
       
         gray=imutils.rotate(gray,angle=rotation)
-        
+    
+    
+    
+    
     TabLicensesFounded=[]
     ContLicensesFounded=[]
+    
+    
+    ##########################################################
+    #gray = cv2.cvtColor(gray, cv2.COLOR_RGB2GRAY)
+  
+    
+    #print(gray)
+    
+    X_resize=x_resize
+    Y_resize=y_resize
+    print("gray.shape " + str(gray.shape)) 
+    Resize_xfactor=1.5
+    Resize_yfactor=1.5
+    
+    rotation, spectrum, frquency =GetRotationImage(gray)
+    #print("rotation = "+ str(rotation))
+    rotation=90 - rotation
+    #print("Car" + str(NumberImageOrder) + " Brillo : " +str(SumBrightnessLic) +   
+    #      " Desviacion : " + str(DesvLic))
+    
+    if (rotation > 0 and rotation < 30)  or (rotation < 0 and rotation > -30):
+        #cv2.imshow("Gray", gray)
+        #cv2.waitKey(0)
+        print(License + " rotate "+ str(rotation))
+        gray=imutils.rotate(gray,angle=rotation)
+        #cv2.imshow("Gray", gray)
+        #v2.waitKey(0)
+    
+    
+    TabLicensesFounded=[]
+    ContLicensesFounded=[]
+    
+    TotHits=0
    
-    gray_img_clahe=ApplyCLAHE(gray)
+    #https://mattmaulion.medium.com/the-digital-image-an-introduction-to-image-processing-basics-fbdf9fd7f462
+    from skimage import img_as_uint
+    # for this demo, set threshold to average value
+    gray1 = img_as_uint(gray > gray.mean())
+    text = pytesseract.image_to_string(gray1, lang='eng',  \
+      config='--psm 6 --oem 3')
+    text = ''.join(char for char in text if char.isalnum()) 
+    text=ProcessText(text)
+    if ProcessText(text) != "":
+    
+        ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
+        if text==License:
+           print(text +  "  Hit with threshold media"  )
+           TotHits=TotHits+1
+        else:
+            print(License + " detected with threshold media" + text)
+    
+   
+    # https://medium.com/@marizombie/computer-vision-interview-convolutional-neural-network-48e4567e4bed
+    kernel = np.array([[1,4,6,4,1], [4,16,24,16,4],[6,24,-476,24,6], [4,16,24,16,4], [1,4,6,4,1]])
+    kernel=kernel*(-1)
+    kernel=kernel/256
+    im = cv2.filter2D(gray, -1, kernel)
+    
+    text = pytesseract.image_to_string(im, lang='eng',  \
+      config='--psm 6 --oem 3')
+    text = ''.join(char for char in text if char.isalnum()) 
+    text=ProcessText(text)
+    if ProcessText(text) != "":
+    
+        ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
+        if text==License:
+           print(text +  "  Hit with wikipedia filter gaussian blur"  )
+           TotHits=TotHits+1
+        else:
+            print(License + " detected with wikipedia filter gaussian blur" + text) 
+    
+    
+    
+      
+    # https://medium.com/@sarcas0705/computer-vision-derivative-over-image-e1020354ddb5
+    #sobel
+    kernel = np.array([[-1,0,1], [-2,0,2], [-1,0,1]])
+    gray1 = cv2.filter2D(gray, -1, kernel)
+    kernel = np.array([[1,2,1], [0,0,0], [-1,-2,-1]])
+    gray2 = cv2.filter2D(gray, -1, kernel) 
+    
+    gray1=gray1+gray2
+   
+    gray1 = cv2.threshold(gray1, 180, 255,
+                         cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]   
+    gray1= cv2.GaussianBlur(gray1, (5,5), 0)
+    text = pytesseract.image_to_string(gray1, lang='eng',  \
+       config='--psm 6 --oem 3')
+    text = ''.join(char for char in text if char.isalnum()) 
+    text=ProcessText(text)
+    if ProcessText(text) != "":
+       
+        ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
+        if text==License:
+           print(text +  "  Hit with  filter sobel "  )
+           TotHits=TotHits+1
+        else:
+           print(License + " detected with  filter sobel as "+ text) 
+    
+  
+    #https://towardsdatascience.com/morphological-operations-for-image-preprocessing-in-opencv-in-detail-15fccd1e5745
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    kernel1 = cv2.getStructuringElement(cv2.MORPH_RECT, (6, 3))
+    blackhat1 = cv2.morphologyEx(gray.copy(), cv2.MORPH_BLACKHAT, kernel1)
+    text = pytesseract.image_to_string(blackhat1, lang='eng',  \
+      config='--psm 6 --oem 3')
+    text = ''.join(char for char in text if char.isalnum())
+    text=ProcessText(text)
+    if ProcessText(text) != "":
+    #if Detect_Spanish_LicensePlate(text)== 1:
+           TabLicensesFounded, ContLicensesFounded =ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
+           if text==License:
+              print(text + "  Hit with Filter blackhat1 ")
+              TotHits=TotHits+1
+           else:
+               print(License + " detected with Filter blackhat1"+ text) 
+   
+    kernel = np.ones((3,3),np.float32)/90
+    gray1 = cv2.filter2D(gray,-1,kernel)   
+    #gray_clahe = cv2.GaussianBlur(gray, (5, 5), 0) 
+    gray_img_clahe=ApplyCLAHE(gray1)
     
     th=OTSU_Threshold(gray_img_clahe)
     max_val=255
     
     ret, o3 = cv2.threshold(gray_img_clahe, th, max_val, cv2.THRESH_TOZERO)
+    
     text = pytesseract.image_to_string(o3, lang='eng',  \
-    config='--psm 13 --oem 3')
-       
-    text = ''.join(char for char in text if char.isalnum())
+      config='--psm 6 --oem 3')
+    text = ''.join(char for char in text if char.isalnum()) 
     text=ProcessText(text)
-    if text!="":
+    if ProcessText(text) != "":
     #if Detect_Spanish_LicensePlate(text)== 1:
             TabLicensesFounded, ContLicensesFounded =ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
-            if text==Licenses[i]:
-               print(text + "  Hit with CLAHE and THRESH_TOZERO" )
-               TotHits=TotHits+1
+            if text==License:
+               print(text + "  Hit with CLAHE  and THRESH_TOZERO" )
+               #TotHits=TotHits+1
             else:
-                print(Licenses[i] + " detected as "+ text) 
+                print(License + " detected with CLAHE and THRESH_TOZERO as "+ text) 
     
     #   Otsu's thresholding
     ret2,gray1 = cv2.threshold(gray,0,255,cv2.THRESH_TRUNC+cv2.THRESH_OTSU)
+  
     text = pytesseract.image_to_string(gray1, lang='eng',  \
-        config='--psm 6 --oem 3')
-       
-    text = ''.join(char for char in text if char.isalnum())
+      config='--psm 6 --oem 3')
+    text = ''.join(char for char in text if char.isalnum()) 
     text=ProcessText(text)
-    if text!="":
-       
-    #if Detect_Spanish_LicensePlate(text)== 1:
+    if ProcessText(text) != "":
+    
         ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)
-        if text==Licenses[i]:
+        if text==License:
             print(text + "  Hit with Otsu's thresholding of cv2 and THRESH_TRUNC" )
             TotHits=TotHits+1
         else:
-            print(Licenses[i] + " detected as "+ text)
+            print(License + " detected with Otsu's thresholding of cv2 and THRESH_TRUNC as "+ text)
+    
+    ####################################################
+    # experimental formula based on the brightness
+    # of the whole image 
+    ####################################################
+   
+    SumBrightness=np.sum(gray)  
+    threshold=(SumBrightness/177600.00) 
+        
+    for z in range(4,8):
+    #for z in range(8,8):
+       kernel = np.array([[0,-1,0], [-1,z,-1], [0,-1,0]])
+       gray1 = cv2.filter2D(gray, -1, kernel)
+              
+      
+       text = pytesseract.image_to_string(gray1, lang='eng',  \
+          config='--psm 6 --oem 3')
+       text = ''.join(char for char in text if char.isalnum()) 
+       text=ProcessText(text)
+       if ProcessText(text) != "":
+      
+           ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
+           if text==License:
+              print(text +  "  Hit with Sharpen filter z= "  +str(z))
+              TotHits=TotHits+1
+           else:
+               print(License + " detected with Sharpen filter z= "  +str(z) + " as "+ text) 
+    
+    gray_img_clahe=ApplyCLAHE(gray)
+    
+    
+    ###################################################################
+    # ANTES
+    th=OTSU_Threshold(gray_img_clahe)
+    max_val=255
     
     threshold=ThresholdStable(gray)
+    
     ret, gray1=cv2.threshold(gray,threshold,255,  cv2.THRESH_TRUNC) 
+    #gray1 = cv2.GaussianBlur(gray1, (1, 1), 0)
     text = pytesseract.image_to_string(gray1, lang='eng',  \
     config='--psm 6 --oem 3')
     text = ''.join(char for char in text if char.isalnum())
-    text=ProcessText(text)
-    if text!="":
-    #if Detect_Spanish_LicensePlate(text)== 1:
+    if Detect_Spanish_LicensePlate(text)== 1:
         ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)    
         if text==Licenses[i]:
             print(text + "  Hit with Stable and THRESH_TRUNC" )
             TotHits=TotHits+1
         else:
             print(Licenses[i] + " detected as "+ text)         
-        
+      
     ret, gray1=cv2.threshold(gray,threshold,255,  cv2.THRESH_TOZERO) 
+    #gray1 = cv2.GaussianBlur(gray1, (1, 1), 0)
     text = pytesseract.image_to_string(gray1, lang='eng',  \
     config='--psm 6 --oem 3')
     text = ''.join(char for char in text if char.isalnum())
-    text=ProcessText(text)
-    if text!="":
-    #if Detect_Spanish_LicensePlate(text)== 1:
+    if Detect_Spanish_LicensePlate(text)== 1:
         ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
         if text==Licenses[i]:
            print(text + "  Hit with Stable and THRESH_TOZERO" )
@@ -319,22 +472,9 @@ def FindLicenseNumber (gray, x_offset, y_offset,  License, x_resize, y_resize, \
     threshold=(SumBrightness/177600.00) 
     
     #####################################################
-  
+      
     ret, gray1=cv2.threshold(gray,threshold,255,  cv2.THRESH_TOZERO)
-    text = pytesseract.image_to_string(gray1, lang='eng',  \
-    config='--psm 6 --oem 3')
-    text = ''.join(char for char in text if char.isalnum())
-    text=ProcessText(text)
-    if text!="":
-    #if Detect_Spanish_LicensePlate(text)== 1:
-        ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
-        if text==Licenses[i]:
-           print(text + "  Hit with Brightness and THRESH_TOZERO" )
-           TotHits=TotHits+1
-        else:
-            print(Licenses[i] + " detected as "+ text)
-     
-    ret, gray1=cv2.threshold(gray,threshold,255,  cv2.THRESH_OTSU)
+    #gray1 = cv2.GaussianBlur(gray1, (1, 1), 0)
     text = pytesseract.image_to_string(gray1, lang='eng',  \
     config='--psm 6 --oem 3')
     text = ''.join(char for char in text if char.isalnum())
@@ -342,46 +482,73 @@ def FindLicenseNumber (gray, x_offset, y_offset,  License, x_resize, y_resize, \
     if Detect_Spanish_LicensePlate(text)== 1:
         ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
         if text==Licenses[i]:
-           print(text + "  Hit with Brightness and THRESH_OTSU" )
+           print(text + "  Hit with Brightness and THRESH_TOZERO" )
            TotHits=TotHits+1
         else:
-            print(Licenses[i] + " detected as "+ text) 
-     
-   
-    for z in range(4,8):
+            print(Licenses[i] + " detected as "+ text)
     
+    for z in range(5,10):
+       if z==6:continue
+       if z==10:continue
        kernel = np.array([[0,-1,0], [-1,z,-1], [0,-1,0]])
        gray1 = cv2.filter2D(gray, -1, kernel)
-              
+       #gray1 = cv2.GaussianBlur(gray1, (1, 1), 0)       
        text = pytesseract.image_to_string(gray1, lang='eng',  \
        config='--psm 6 --oem 3 -c tessedit_char_whitelist= ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ')
       
        text = ''.join(char for char in text if char.isalnum())
+       
        if Detect_Spanish_LicensePlate(text)== 1:
            ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
+           
            if text==Licenses[i]:
-              print(text +  "  Hit with Sharpen filter"  )
+              print(text +  "  Hit with Sharpen filter z = " + str(z) )
               TotHits=TotHits+1
            else:
-               print(Licenses[i] + " detected as "+ text) 
+               print(Licenses[i] + " detected with sharpen filter as "+ text+ " z= "+str(z)) 
     
-    gray2= cv2.bilateralFilter(gray,3, 75, 75)
-    for z in range(5,11):
+   
+      
+    for z in range(10,12):
+       
        kernel = np.array([[-1,-1,-1], [-1,z,-1], [-1,-1,-1]])
-       gray1 = cv2.filter2D(gray2, -1, kernel)
+       gray1 = cv2.filter2D(gray, -1, kernel)
+       gray1 = cv2.GaussianBlur(gray1, (1, 1), 2)
        text = pytesseract.image_to_string(gray1, lang='eng',  \
        config='--psm 6 --oem 3 -c tessedit_char_whitelist= ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ')
       
        text = ''.join(char for char in text if char.isalnum())
+       
        if Detect_Spanish_LicensePlate(text)== 1:
            ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
            if text==Licenses[i]:
-              print(text +  "  Hit with Sharpen filter modified"  )
+              print(text +  "  Hit with Sharpen filter modified z= " +str(z) )
               TotHits=TotHits+1
            else:
-               print(Licenses[i] + " detected as "+ text) 
-              
+               print(Licenses[i] + " detected with Sharpen filter modified as "+ text+ " z= "+str(z)) 
+    
+    
+    #https://anishgupta1005.medium.com/building-an-optical-character-recognizer-in-python-bbd09edfe438
+     
+    bilateral = cv2.bilateralFilter(gray,9,75,75)
+    median = cv2.medianBlur(bilateral,3)
+    
+    adaptive_threshold_mean = cv2.adaptiveThreshold(median,255,cv2.ADAPTIVE_THRESH_MEAN_C,\
+        cv2.THRESH_BINARY,11,2)
         
+    text = pytesseract.image_to_string( adaptive_threshold_mean , lang='eng',  \
+        config='--psm 6 --oem 3') 
+    text = ''.join(char for char in text if char.isalnum())
+    if Detect_Spanish_LicensePlate(text)== 1:
+        ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text)   
+        if text==Licenses[i]:
+           print(text + "  Hit with  adaptive_threshold_mean " )
+           TotHits=TotHits+1
+        else:
+            print(Licenses[i] + " detected with  adaptive_threshold_mean  "+ text)          
+            
+         
+    ################################################################
     return TabLicensesFounded, ContLicensesFounded
 
  ########################################################################
@@ -413,12 +580,13 @@ def loadimagesRoboflow (dirname):
                  
                  filepath = os.path.join(root, filename)
                  License=filename[:len(filename)-4]
-                 
                  # Spanish license plate is NNNNAAA
                  if Detect_Spanish_LicensePlate(License)== -1: continue
                  
+                 
                  image = cv2.imread(filepath)
-                 image=cv2.resize(image, (640,640))
+                 #image=cv2.resize(image,(416,416)) 
+                 #image=cv2.resize(image, (640,640))
                  
                  #Color Balance
                 #https://blog.katastros.com/a?ID=01800-4bf623a1-3917-4d54-9b6a-775331ebaf05
@@ -456,7 +624,7 @@ def loadimagesRoboflow (dirname):
                  
                  image=balance_img
                  
-                   
+                 
                  images.append(image)
                  Licenses.append(License)
                  
@@ -467,8 +635,16 @@ def loadimagesRoboflow (dirname):
      return images, Licenses
 
 
+# COPIED FROM https://programmerclick.com/article/89421544914/
+def gamma_trans (img, gamma): # procesamiento de la función gamma
+         gamma_table = [np.power (x / 255.0, gamma) * 255.0 for x in range (256)] # Crear una tabla de mapeo
+         gamma_table = np.round (np.array (gamma_table)). astype (np.uint8) #El valor del color es un número entero
+         return cv2.LUT (img, gamma_table) #Tabla de búsqueda de color de imagen. Además, se puede diseñar un algoritmo adaptativo de acuerdo con el principio de homogeneización de la intensidad de la luz (color).
+def nothing(x):
+    pass
 
 
+   
 def Detect_Spanish_LicensePlate(Text):
        
     if len(Text) != 7: return -1
@@ -487,7 +663,7 @@ def ProcessText(text):
     if Detect_Spanish_LicensePlate(text)== -1: 
        return ""
     else:
-       return text
+       return text   
 
 def ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text):
     
@@ -501,6 +677,7 @@ def ApendTabLicensesFounded (TabLicensesFounded, ContLicensesFounded, text):
        TabLicensesFounded.append(text) 
        ContLicensesFounded.append(1)
     return TabLicensesFounded, ContLicensesFounded
+
 
 # ttps://medium.chom/@chanon.krittapholchai/build-object-detection-gui-with-yolov8-and-pysimplegui-76d5f5464d6c
 def DetectLicenseWithYolov8 (img):
@@ -530,14 +707,13 @@ def DetectLicenseWithYolov8 (img):
         #cv2.waitKey(0)
         TabcropLicense.append(cropLicense)
     return TabcropLicense
+
+
 ###########################################################
 # MAIN
 ##########################################################
 
-
 imagesComplete, Licenses=loadimagesRoboflow(dirname)
-
-
 
 print("Number of imagenes : " + str(len(imagesComplete)))
 
@@ -545,7 +721,6 @@ print("Number of   licenses : " + str(len(Licenses)))
 
 ContDetected=0
 ContNoDetected=0
-
 TotHits=0
 TotFailures=0
 with open( "LicenseResults.txt" ,"w") as  w:
@@ -555,6 +730,9 @@ with open( "LicenseResults.txt" ,"w") as  w:
             
             License=Licenses[i]
             
+            #if License < "EATTHE":
+            #    print("SALTA " + License)
+            #    continue
             TabImgSelect =DetectLicenseWithYolov8(gray)
             if TabImgSelect==[]:
                 print(License + " NON DETECTED")
@@ -565,7 +743,7 @@ with open( "LicenseResults.txt" ,"w") as  w:
                 print(License + " DETECTED ")
                 
             gray=TabImgSelect[0]  
-            
+           
             x_off=3
             y_off=2
             
@@ -581,7 +759,7 @@ with open( "LicenseResults.txt" ,"w") as  w:
             
             BilateralOption=0
             
-            TabLicensesFounded, ContLicensesFounded= FindLicenseNumber (gray,  x_off, y_off,  License, x_resize, y_resize, \
+            TabLicensesFounded, ContLicensesFounded= FindLicenseNumber (gray, x_off, y_off,  License, x_resize, y_resize, \
                                    Resize_xfactor, Resize_yfactor, BilateralOption)
               
             
