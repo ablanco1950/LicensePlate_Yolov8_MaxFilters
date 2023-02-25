@@ -1,3 +1,5 @@
+Modified at 24/02/20223, eliminating several filters in the pipeline filters
+
 LicensePlate_Yolov8_MaxFilters: recognition of car license plates that are detected by Yolov8 and recognized with pytesseract after processing with a pipeline of filters choosing the most repeated car license plate.
 In a test with 21 images, 17 hits are achieved
 
