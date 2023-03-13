@@ -1,4 +1,4 @@
-Modified at 24/02/20223, eliminating several filters in the pipeline filters
+Modified at 24/02/2023, eliminating several filters in the pipeline filters
 
 LicensePlate_Yolov8_MaxFilters: recognition of car license plates that are detected by Yolov8 and recognized with pytesseract after processing with a pipeline of filters choosing the most repeated car license plate.
 In a test with 21 images, 17 hits are achieved
@@ -97,4 +97,6 @@ https://anishgupta1005.medium.com/building-an-optical-character-recognizer-in-py
 https://datasmarts.net/es/como-usar-el-detector-de-puntos-clave-mser-en-opencv/
 
 https://felipemeganha.medium.com/detecting-handwriting-regions-with-opencv-and-python-ff0b1050aa4e
+
+Note: On 03/13/2023, the best results are obtained with the https://github.com/ablanco1950/LicensePlate_Yolov8_Filters_PaddleOCR project, which would replace this one.
      
